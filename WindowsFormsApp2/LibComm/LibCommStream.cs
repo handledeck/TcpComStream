@@ -19,6 +19,24 @@ namespace LibComm
     SerialPort __serialPort = null;
     ReadData __readData = null;
     System.IO.Stream __stream = null;
+
+    /// <summary>
+    /// <b>Пример использования</b>
+    ///<i>
+    /// <code>
+    /// LibComm.LibCommStream libCommStream = new LibComm.LibCommStream(
+    ///<br>new LibComm.ui.ReadData(d => {</br>
+    ///<br>   d.Write(data, 0, data.Length);</br>
+    ///<br>   d.Read(data, 0, data.Length);</br>
+    ///<br>}</br>
+    ///<br>catch (Exception exp)</br>
+    ///<br>{</br>
+    ///<br> throw;</br>
+    ///<br>};</br>
+    ///<br>})); </br>
+    ///</code>
+    ///</i>
+    ///</summary>
     public LibCommStream(ReadData readData)
     {
       __readData = readData;
@@ -114,9 +132,7 @@ namespace LibComm
         
       }, __tcpClient);
       bool state = result.AsyncWaitHandle.WaitOne(timeout);
-      if (__tcpClient == null)
-        return null;
-      if (!__tcpClient.Connected)
+      if (__tcpClient == null || !__tcpClient.Connected)
         return null;
       else
       {
@@ -145,51 +161,56 @@ namespace LibComm
     }
 
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public void Open() {
       using (WaitForm frm = new WaitForm(__readData, GetVariantConnectionAlt))
       {
         try
         {
 
-        
-        frm.WorkText = "Открытие канала связи";
-        if (__tabConnection.IsTcpConnect())
-        {
-          frm.SetPictureWait(EnumImageAction.Net);
-        }
-        else
-        {
-          frm.SetPictureWait(EnumImageAction.ComPort);
-        }
 
-        DialogResult res = frm.ShowDialog();
+          frm.WorkText = "Открытие канала связи";
+          if (__tabConnection.IsTcpConnect())
+          {
+            frm.SetPictureWait(EnumImageAction.Net);
+          }
+          else
+          {
+            frm.SetPictureWait(EnumImageAction.ComPort);
+          }
 
-        if (res == DialogResult.Abort)
-        {
-          MessageBox.Show("Таймаут открытия канала","Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-          frm.Close();
-        }
-        else if (res== DialogResult.Cancel) {
-            //if(__stream!=null)
-            //__stream.Dispose();
-            //  __stream = null;
+          DialogResult res = frm.ShowDialog();
 
-
-            if (__tcpClient != null)
-              __tcpClient.Client.Dispose();
-            if (__serialPort != null)
-              __serialPort.Dispose();
-            __serialPort = null;
-            __tcpClient = null;
-            //frm.Close();
-            //MessageBox.Show("Отмена", "Отмена", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+          if (res == DialogResult.Abort)
+          {
+            frm.Close();
+            MessageBox.Show("Ошибка открытия канала", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          }
+          else if (res == DialogResult.Cancel)
+          {
+            frm.Close();
+            MessageBox.Show("Операция отменена пользователем", "Отмена", MessageBoxButtons.OK, MessageBoxIcon.Hand);
           }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+        finally
+        {
+          if (__tcpClient != null)
+          {
+            __tcpClient.Client.Dispose();
+            __serialPort = null;
+          }
 
-          throw;
+          if (__serialPort != null)
+          {
+            __serialPort.Dispose();
+            __tcpClient = null;
+          }
         }
       }
     }

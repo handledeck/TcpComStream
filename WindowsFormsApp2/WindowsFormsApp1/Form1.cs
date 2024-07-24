@@ -22,15 +22,14 @@ namespace WindowsFormsApp1
 
     private void button1_Click(object sender, EventArgs e)
     {
+      LibComm.LibCommStream libCommStr = new LibComm.LibCommStream(null);
       byte[] data = new byte[1024];
       LibComm.LibCommStream libCommStream = new LibComm.LibCommStream(new LibComm.ui.ReadData(d => {
-        try
-        {
+        try {
           d.Read(data, 0, data.Length);
-          int x = 0;
         }
         catch (Exception exp)
-        {
+   {
 
           throw;
         }
