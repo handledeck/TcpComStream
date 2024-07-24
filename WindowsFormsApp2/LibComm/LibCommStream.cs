@@ -23,11 +23,15 @@ namespace LibComm
     /// <summary>
     /// <b>Пример использования</b>
     ///<i>
+    ///<strong>
+    ///<br>byte[] dataWrite = new byte[5] { 1, 2, 3, 4, 5 };</br>
+    ///<br>byte[] dataRead = new byte[5];</br>
+    ///</strong>
     /// <code>
     /// LibComm.LibCommStream libCommStream = new LibComm.LibCommStream(
-    ///<br>new LibComm.ui.ReadData(d => {</br>
-    ///<br>   d.Write(data, 0, data.Length);</br>
-    ///<br>   d.Read(data, 0, data.Length);</br>
+    ///<br>new LibComm.ui.ReadData(stream => {</br>
+    ///<br>   stream.Write(dataWrite, 0, dataWrite.Length);</br>
+    ///<br>   stream.Read(dataRead, 0, dataRead.Length);</br>
     ///<br>}</br>
     ///<br>catch (Exception exp)</br>
     ///<br>{</br>
